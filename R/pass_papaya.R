@@ -58,12 +58,21 @@ pass_papaya <- function(
   cmd = ""
   if (length(L$images) > 0){
     cmd = paste0(start, L$images, end)
+    index = c(top, cmd, bottom)
+  }
+  if (grepl(',', L$images)){
+    cmd = paste0(start, L$images, end)
+    overlay_opt = paste0(
+      'params[', sub('.*,\\s*', '', L$images), 
+      '] = {min:0.0,max:1.0,lut:"Red",alpha:0.10};'
+    )
+    lut_opt = 'params["luts"] = [{name:"Red",data:[[0.0,1.0,0.0,0.0],[1.0,1.0,0.0,0.0]]}];'
+    index = c(top, cmd, overlay_opt, lut_opt, bottom)
   }
   
   ##################
   # Writing out index.html to use
   ##################
-  index = c(top, cmd, bottom)
   writeLines(text = index, con = index.file)
   # cat(index.file)
   ##################
